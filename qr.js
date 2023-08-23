@@ -1,27 +1,26 @@
 const http = require("http");
 const QRCode = require("qrcode");
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
 const server = http.createServer(async (req, res) => {
   if (req.url === "/") {
     res.writeHead(200, { "Content-Type": "text/html" });
 
-    // Generate a QR code image data URL
-    const qrCodeDataUrl = await QRCode.toDataURL("Hello");
+    rl.question("Enter the data for QR code: ", async (data) => {
+      const qrCodeDataUrl = await QRCode.toDataURL(data);
 
-    // Create an HTML page that displays the QR code image
-    const html = `
-      <html>
-        <head>
-          <title>QR Code Example</title>
-        </head>
-        <body>
-          <h1>QR Code Here</h1>
-          <img src="${qrCodeDataUrl}" alt="QR Code" />
-        </body>
-      </html>
-    `;
+      const html = `
+      <h1>QR Code Here</h1>
+      <img src="${qrCodeDataUrl}" alt="QR Code" />
+      `;
 
-    res.end(html);
+      res.end(html);
+    });
   } else {
     res.writeHead(404, { "Content-Type": "text/plain" });
     res.end("Page not found");
